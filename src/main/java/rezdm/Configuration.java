@@ -1,5 +1,10 @@
 package rezdm;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Configuration {
@@ -10,7 +15,15 @@ public class Configuration {
     private String From;
     private List<String> Recepients;
 
+    private int ParallelGDriveQueries;
+
     public Configuration() {
+    }
+
+    public static Configuration read(String configurationFileName) throws IOException {
+        final XmlMapper xmlMapper = new XmlMapper();
+        final String xml = new String(Files.readAllBytes(Paths.get(configurationFileName)));
+        return xmlMapper.readValue(xml, Configuration.class);
     }
 
     public String getInstance() {
@@ -59,5 +72,13 @@ public class Configuration {
 
     public void setRecepients(List<String> aRecepients) {
         this.Recepients = aRecepients;
+    }
+
+    public int getParallelGDriveQueries() {
+        return ParallelGDriveQueries;
+    }
+
+    public void setParallelGDriveQueries(int parallelGDriveQueries) {
+        ParallelGDriveQueries = parallelGDriveQueries;
     }
 }
