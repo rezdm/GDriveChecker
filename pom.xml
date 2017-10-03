@@ -122,10 +122,16 @@
             <version>RELEASE</version>
         </dependency>
 
-        <!-- in-mem db -->
+        <!-- in-mem db and orm -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
             <version>RELEASE</version>
         </dependency>
 

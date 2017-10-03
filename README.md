@@ -9,6 +9,10 @@ Note, that this tool designed to suit my use case: report only new files. If any
 ### Google Drive API
 ### GDriveChecker configuration
 
+## Requirements
+JDK 8 (streams)
+Maven (build)
+
 ## History of changes
 GD-000: Initial seed
 
@@ -19,3 +23,5 @@ GD-002: Use existing config, etc to read actual data from my drive
 GD-003: After experiencing some issues, try to convert to thread-safe
 
 GD-004: v3 Api forces(?) to enumerate files by pages -- comply to this; (sideeffect: minor update in logging; limit to 2 threads accessing gdrive)
+
+GD-005: Persist Google Drive files info locally

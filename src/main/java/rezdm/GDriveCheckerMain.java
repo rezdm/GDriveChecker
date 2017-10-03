@@ -2,6 +2,7 @@ package rezdm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rezdm.data.GDriveFileInfo;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -9,12 +10,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class GDriveCheckerMain
-{
+public class GDriveCheckerMain {
     private final static Logger log = LoggerFactory.getLogger(GDriveCheckerMain.class);
 
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
         log.info("GDriveChecker starting");
         String configFileName = null != args && args.length >= 1 ? args[0] : "GDriveChecker-config.xml";
 
@@ -28,7 +27,8 @@ public class GDriveCheckerMain
                return;
            }
            Map<String, Collection<GDriveFileInfo>> remoteFiles = collector.collected();
-
+           LocalStorage x = new LocalStorage();
+           x.run();
            int z = 4/2;
         } catch (IOException | GeneralSecurityException | InterruptedException | ExecutionException ex ) {
             log.error("Exception while loading configuration, exiting application", ex);

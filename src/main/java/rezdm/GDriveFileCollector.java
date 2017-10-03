@@ -5,6 +5,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import rezdm.data.GDriveFileInfo;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

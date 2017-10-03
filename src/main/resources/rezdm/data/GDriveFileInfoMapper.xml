@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+        'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace="rezdm.data.GDriveFileInfoMapper">
+
+    <resultMap id = "result" type = "rezdm.data.GDriveFileInfo">
+        <result property = "id" column = "id"/>
+        <result property = "fileId" column = "fileId"/>
+        <result property = "folderId" column = "folderId"/>
+        <result property = "path" column = "path"/>
+        <result property = "name" column = "name"/>
+    </resultMap>
+
+    <select id="selectGDriveFileInfo" resultMap="result">
+        select id, fileId, folderId, path, name from GDriveFileInfo
+    </select>
+</mapper>
