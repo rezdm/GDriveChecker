@@ -7,7 +7,28 @@ Note, that this tool designed to suit my use case: report only new files. If any
 
 ## Configuration details
 ### Google Drive API
+User is required to obtain her/his own Google Drive project and create secret.json
+
 ### GDriveChecker configuration
+Configuration example:
+
+<Configuration>
+    <instance>GDriveChecker1</instance>
+    <secretFile>GDriveChecker-secret.json</secretFile>
+    <credentialsStore>.gdrivechecker</credentialsStore>
+    <folders>
+        <folder>/Aero/</folder>
+        <folder>/Upload/panos</folder>
+    </folders>
+
+    <from>reznitsky@gmail.com</from>
+    <recepients>
+        <recepient>reznitsky@gmail.com</recepient>
+    </recepients>
+
+    <parallelGDriveQueries>2</parallelGDriveQueries>
+</Configuration>
+
 
 ## Requirements
 JDK 8 (streams)
