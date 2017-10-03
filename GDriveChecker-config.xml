@@ -3,10 +3,10 @@
     <secretFile>GDriveChecker-secret.json</secretFile>
     <credentialsStore>.gdrivechecker</credentialsStore>
     <folders>
-        <folder>/Upload/</folder>
-        <folder>/Aero/</folder>
-        <folder>/Upload/Panos/</folder>
-        <folder>/Upload/Postpone/</folder>
+        <folder>/Upload</folder>
+        <folder>/Aero</folder>
+        <folder>/Upload/panos</folder>
+        <folder>/Upload/Postpone</folder>
     </folders>
 
     <from>reznitsky@gmail.com</from>

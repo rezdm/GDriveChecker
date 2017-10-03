@@ -16,32 +16,56 @@ import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
+/*
+*
+* I am not sure on thread-safety of all components of Google Api for Java;
+* It does not heart having this "thread independent"
+*
+ */
+
 public class GoogleServices {
-    private final String _ApplicationName = "GDriveCheckerMailer";
+    //private final String _ApplicationName = "GDriveChecker";
     private final HttpTransport _HttpTransport = GoogleNetHttpTransport.newTrustedTransport();
     private final JacksonFactory _JacksonFactory = JacksonFactory.getDefaultInstance();
-    private final Drive _drive;
-    private final Gmail _gmail;
 
-    private Credential authorize(Configuration configuration) throws IOException {
-        InputStream in = new FileInputStream(configuration.getSecretFile());
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(this._JacksonFactory, new InputStreamReader(in));
-        GoogleAuthorizationCodeFlow flow = (new GoogleAuthorizationCodeFlow.Builder(this._HttpTransport, this._JacksonFactory, clientSecrets, Arrays.asList("https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/gmail.compose"))).setDataStoreFactory(new FileDataStoreFactory(new File(configuration.getCredentialsStore()))).setAccessType("offline").build();
-        Credential credential = (new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver())).authorize("user");
-        return credential;
+    private final ThreadLocal<Drive> _drive;
+    private final ThreadLocal<Gmail> _gmail;
+
+    private Credential authorize(Configuration configuration) throws IOException, GeneralSecurityException {
+        final InputStream in = new FileInputStream(configuration.getSecretFile());
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(_JacksonFactory, new InputStreamReader(in));
+        GoogleAuthorizationCodeFlow flow = (new GoogleAuthorizationCodeFlow.Builder(_HttpTransport, _JacksonFactory, clientSecrets, Arrays.asList("https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/gmail.compose"))).setDataStoreFactory(new FileDataStoreFactory(new File(configuration.getCredentialsStore()))).setAccessType("offline").build();
+        return (new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver())).authorize("user");
     }
 
-    public GoogleServices(Configuration configuration) throws IOException, GeneralSecurityException {
-        Credential credential = this.authorize(configuration);
-        this._drive = (new com.google.api.services.drive.Drive.Builder(this._HttpTransport, this._JacksonFactory, credential)).setApplicationName("GDriveCheckerMailer").build();
-        this._gmail = (new com.google.api.services.gmail.Gmail.Builder(this._HttpTransport, this._JacksonFactory, credential)).setApplicationName("GDriveCheckerMailer").build();
+    GoogleServices(Configuration configuration) throws IOException, GeneralSecurityException {
+        _drive = ThreadLocal.withInitial(() -> threadLocalDrive(configuration));
+        _gmail = ThreadLocal.withInitial(() -> threadLocalGmail(configuration));
     }
 
-    public Drive drive() {
-        return this._drive;
+    private Drive threadLocalDrive(Configuration configuration) {
+        try {
+            Credential credential = authorize(configuration);
+            return (new Drive.Builder(_HttpTransport, _JacksonFactory, credential)).setApplicationName("GDriveChecker").build();
+        } catch (IOException | GeneralSecurityException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private Gmail threadLocalGmail(Configuration configuration) {
+        try {
+            Credential credential = authorize(configuration);
+            return (new Gmail.Builder(_HttpTransport, _JacksonFactory, credential)).setApplicationName("GDriveChecker").build();
+        } catch (IOException | GeneralSecurityException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    Drive drive() {
+        return _drive.get();
     }
 
     public Gmail gmail() {
-        return this._gmail;
+        return _gmail.get();
     }
 }

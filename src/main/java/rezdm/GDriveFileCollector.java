@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
-public class GDriveFileCollector {
+class GDriveFileCollector {
     private final static Logger log = LoggerFactory.getLogger(GDriveFileCollector.class);
 
     private final Drive _drive;
@@ -52,16 +52,16 @@ public class GDriveFileCollector {
     }
 
     private String resolveFolderId(String startingFolderId, String path) throws IOException {
-        final StringTokenizer st = new StringTokenizer(startingFolderId, "/");
+        final StringTokenizer st = new StringTokenizer(path, "/");
         String parentFolderId = startingFolderId;
         do {
             String folderName = st.nextToken();
             if (null != folderName) {
-                final List<com.google.api.services.drive.model.File> files = _drive.files().list().setQ("name = '" + folderName + "' and '" + parentFolderId + "' in parents").execute().getFiles();
+                final List<File> files = _drive.files().list().setQ("name = '" + folderName + "' and '" + parentFolderId + "' in parents").execute().getFiles();
                 if(files.size() != 1) {
                     throw new InvalidPathException("Wrong path given: [" + path + "]", "Cannot find on Google Drive, result contains [" + files.size() + "] folders/files");
                 }
-                final com.google.api.services.drive.model.File file = files.get(0);
+                final File file = files.get(0);
                 parentFolderId = file.getId();
             }
         } while(st.hasMoreTokens());
