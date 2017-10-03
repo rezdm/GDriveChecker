@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class GDriveCheckerMain
@@ -25,7 +27,9 @@ public class GDriveCheckerMain
                log.info("Collecting files information resulted in no files, exiting application");
                return;
            }
+           Map<String, Collection<GDriveFileInfo>> remoteFiles = collector.collected();
 
+           int z = 4/2;
         } catch (IOException | GeneralSecurityException | InterruptedException | ExecutionException ex ) {
             log.error("Exception while loading configuration, exiting application", ex);
         }

@@ -20,3 +20,5 @@ hs_err_pid*
 # proj-specific
 .gdrivechecker
 *secret.json
+
+GDriveChecker-config-real.xml

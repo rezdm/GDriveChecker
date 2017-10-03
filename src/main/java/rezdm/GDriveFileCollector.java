@@ -2,16 +2,14 @@ package rezdm;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.InvalidPathException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -21,7 +19,7 @@ class GDriveFileCollector {
 
     private final Drive _drive;
     private final Collection<String> _paths;
-    private final Map<String, Collection<File>> _remoteFiles = new ConcurrentHashMap<>();
+    private final Map<String, Collection<GDriveFileInfo>> _remoteFiles = new ConcurrentHashMap<>();
     private final int _parallelQueries;
 
     GDriveFileCollector(Drive drive, Collection<String> paths, int parallelQueries) {
@@ -37,18 +35,35 @@ class GDriveFileCollector {
         return _remoteFiles.size() > 0;
     }
 
+    Map<String, Collection<GDriveFileInfo>> collected() {
+        return _remoteFiles;
+    }
+
     private void processSinglePath(String rootId, String path) {
-        log.info("Processing [" + path + "]");
+        log.info(String.format("Start processing folder [%s]", path));
         try {
             final String folderId = resolveFolderId(rootId, path);
-            final List<File> files = _drive.files().list().setQ("'" + folderId + "' in parents").execute().getFiles();
-            log.info("Path [" + path + "] with id [" + folderId + "] contains [" + files.size() + "]");
-            if(files.size() > 0) {
-                _remoteFiles.put(path, files);
+            Drive.Files.List request = _drive.files().list().setQ("'" + folderId + "' in parents").setPageSize(100).setFields("nextPageToken, files(id, name)");
+            final List<GDriveFileInfo> folderContents = new ArrayList<>();
+            do {
+                FileList result = request.execute();
+                List<File> files = result.getFiles();
+                if (files != null) {
+                    files.forEach((f) -> {
+                        log.debug(String.format("[%s]: %s", path, f.getName()));
+                        folderContents.add(new GDriveFileInfo(f.getId(), folderId, path, f.getName()));
+                    } );
+                }
+                request.setPageToken(result.getNextPageToken());
+            } while(request.getPageToken() != null && request.getPageToken().length() > 0);
+            if(folderContents.size()>0) {
+                _remoteFiles.put(path, folderContents);
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (IOException ex) {
+            log.error(String.format("Error processing folder [%s]", path), ex);
+            throw new UncheckedIOException(ex);
         }
+        log.info(String.format("Finish processing folder [%s]", path));
     }
 
     private String resolveFolderId(String startingFolderId, String path) throws IOException {
@@ -59,7 +74,7 @@ class GDriveFileCollector {
             if (null != folderName) {
                 final List<File> files = _drive.files().list().setQ("name = '" + folderName + "' and '" + parentFolderId + "' in parents").execute().getFiles();
                 if(files.size() != 1) {
-                    throw new InvalidPathException("Wrong path given: [" + path + "]", "Cannot find on Google Drive, result contains [" + files.size() + "] folders/files");
+                    throw new InvalidPathException(String.format("Wrong path given: [%s]", path), String.format("Cannot find on Google Drive, result contains [%d] folders/files", files.size()));
                 }
                 final File file = files.get(0);
                 parentFolderId = file.getId();
