@@ -6,3 +6,9 @@ In 2014 I've got a big update in my family situation and I needed something to p
 ## Configuration details
 ### Google Drive API
 ### Tool configuration
+
+## History of changes
+GD-000: Initial seed
+GD-001: Check out/play with Google Drive Api v3
+GD-002: Use existing config, etc to read actual data from my drive
+GD-003: After experiencing some issues, try to convert to thread-safe
