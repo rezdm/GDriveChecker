@@ -34,8 +34,6 @@ public class GDriveCheckerMain {
            final Map<String, List<GDriveFileInfo>> remoteFiles = new HashMap<>();
            final List<GDriveFileInfo> storedFiles = new ArrayList<>();
 
-           final ExecutorService executor = Executors.newCachedThreadPool();
-
            log.info("Read from Google drive and read from local storage -- begin");
            RunSimultaneously(
                () -> {if(collector.collect()) { remoteFiles.putAll(collector.collected());}},
@@ -43,6 +41,7 @@ public class GDriveCheckerMain {
            );
            log.info("Read from Google drive and read from local storage -- done");
 
+           final Map<String, List<GDriveFileInfo>> newFiles = FindNewFiles(storedFiles, remoteFiles);
         } catch (IOException | GeneralSecurityException | InterruptedException ex ) {
             log.error("Exception while loading configuration, exiting application", ex);
         }
@@ -54,6 +53,10 @@ public class GDriveCheckerMain {
         Arrays.stream(tasks).forEach(executor::submit);
         executor.shutdown();
         executor.awaitTermination(10, TimeUnit.MINUTES);
+    }
+
+    private static Map<String, List<GDriveFileInfo>> FindNewFiles(List<GDriveFileInfo> storedFiles, Map<String, List<GDriveFileInfo>> remoteFiles) {
+        return null;
     }
 
 }
