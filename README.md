@@ -12,22 +12,25 @@ User is required to obtain her/his own Google Drive project and create secret.js
 ### GDriveChecker configuration
 Configuration example:
 
-<Configuration>
-    <instance>GDriveChecker1</instance>
-    <secretFile>GDriveChecker-secret.json</secretFile>
-    <credentialsStore>.gdrivechecker</credentialsStore>
-    <folders>
-        <folder>/Aero/</folder>
-        <folder>/Upload/panos</folder>
-    </folders>
 
-    <from>reznitsky@gmail.com</from>
-    <recepients>
-        <recepient>reznitsky@gmail.com</recepient>
-    </recepients>
-
-    <parallelGDriveQueries>2</parallelGDriveQueries>
-</Configuration>
+    <Configuration>
+        <instance>GDriveChecker1</instance>
+        <secretFile>GDriveChecker-secret.json</secretFile>
+        <credentialsStore>.gdrivechecker</credentialsStore>
+        <folders>
+            <folder>/Aero/</folder>
+            <folder>/Upload/panos</folder>
+        </folders>
+    
+        <from>reznitsky@gmail.com</from>
+        <recepients>
+            <recepient>reznitsky@gmail.com</recepient>
+        </recepients>
+    
+        <parallelGDriveQueries>2</parallelGDriveQueries>
+    
+        <dbLocation>./.gdrivechecker.db/gdrivechecker</dbLocation>
+    </Configuration>
 
 
 ## Requirements

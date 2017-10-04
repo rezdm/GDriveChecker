@@ -13,52 +13,69 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+final class AutoCloseableSession implements AutoCloseable {
+    private final SqlSession Session;
+
+    AutoCloseableSession(SqlSessionFactory sessionFactory)  {
+        Session = sessionFactory.openSession();
+    }
+
+    public void close(){
+        Session.commit();
+        Session.close();
+    }
+
+    SqlSession getSession() {
+        return Session;
+    }
+}
 
 class LocalStorage {
     private final static Logger log = LoggerFactory.getLogger(LocalStorage.class);
+    private final SqlSessionFactory SqlSessionFactory;
+    private final static Class<GDriveFileInfoMapper> MapperClass = rezdm.data.GDriveFileInfoMapper.class;
 
-    void run(List<GDriveFileInfo> files) {
-        try {
-            final String resource = "rezdm/mybatis-config.xml";
-            final InputStream inputStream = Resources.getResourceAsStream(resource);
-            final Properties props = new Properties();
-            props.setProperty("db_path", "./.gdrivechecker.dbXYZ/zz");
-            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, props);
+    LocalStorage(String location) throws IOException {
+        final String resource = "rezdm/mybatis-config.xml";
+        final InputStream inputStream = Resources.getResourceAsStream(resource);
+        final Properties props = new Properties();
+        props.setProperty("db_path", location);
+        log.info(String.format("Create DB SqlSessionFactory with db location [%s]", location));
+        SqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, props);
+        createTable();
+    }
 
-            {
-                SqlSession session = sqlSessionFactory.openSession();
-                try {
-                    GDriveFileInfoMapper mapper = session.getMapper(rezdm.data.GDriveFileInfoMapper.class);
-                    mapper.createTable();
-                    //
-                    //final List<GDriveFileInfo> files = mapper.selectGDriveFileInfo();
-                    //int zz = files.size();
-                    //
-                    mapper.insertGDriveFileInfo(files);
-                    session.commit();
-                } finally {
-                    session.close();
-                }
-            }
-
-            {
-                SqlSession session = sqlSessionFactory.openSession();
-                try {
-                    GDriveFileInfoMapper mapper = session.getMapper(rezdm.data.GDriveFileInfoMapper.class);
-                    //mapper.createTable();
-
-                    final List<GDriveFileInfo> _files = mapper.selectGDriveFileInfo();
-                    int zz = _files.size();
-                    int zzz = zz/2;
-                } finally {
-                    session.close();
-                }
-            }
-
-        } catch (IOException ex) {
-            log.error(ex.getMessage(), ex);
-            throw new RuntimeException(ex);
+    private <T> T DaoRun(Function<GDriveFileInfoMapper, T> f){
+        try (final AutoCloseableSession session = new AutoCloseableSession(SqlSessionFactory)) {
+            final GDriveFileInfoMapper mapper = session.getSession().getMapper(MapperClass);
+            return f.apply(mapper);
         }
+    }
 
+    private void DaoRunVoid(Consumer<GDriveFileInfoMapper> f){
+        try (final AutoCloseableSession session = new AutoCloseableSession(SqlSessionFactory)) {
+            final GDriveFileInfoMapper mapper = session.getSession().getMapper(MapperClass);
+            f.accept(mapper);
+        }
+    }
+
+    private void createTable() {
+        log.info("Create table if not exists");
+        DaoRunVoid(GDriveFileInfoMapper::createTable);
+    }
+
+    public List<GDriveFileInfo> ReadGDriveFileInfo(){
+        log.info("Read db -- load list of files");
+        return DaoRun(GDriveFileInfoMapper::selectGDriveFileInfo);
+    }
+
+    public void WriteGDriveFileInfo(final List<GDriveFileInfo> files){
+        log.info(String.format("Read db -- load list of [%d] files", files.size()));
+        if(files.size() > 0) {
+            DaoRunVoid((mapper) -> mapper.insertGDriveFileInfo(files));
+        }
     }
 }

@@ -16,6 +16,7 @@ public class Configuration {
     private List<String> Recepients;
 
     private int ParallelGDriveQueries;
+    private String DbLocation;
 
     public Configuration() {
     }
@@ -80,5 +81,13 @@ public class Configuration {
 
     public void setParallelGDriveQueries(int parallelGDriveQueries) {
         ParallelGDriveQueries = parallelGDriveQueries;
+    }
+
+    public String getDbLocation() {
+        return DbLocation;
+    }
+
+    public void setDbLocation(String dbLocation) {
+        DbLocation = dbLocation;
     }
 }

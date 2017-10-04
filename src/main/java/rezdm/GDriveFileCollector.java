@@ -29,11 +29,16 @@ class GDriveFileCollector {
         _parallelQueries = parallelQueries;
     }
 
-    boolean collect() throws IOException, ExecutionException, InterruptedException {
-        final String rootId = _drive.files().get("root").setFields("id").execute().getId();
-        final ForkJoinPool pool = new ForkJoinPool(_parallelQueries);
-        pool.submit(() -> _paths.parallelStream().forEach((path) -> processSinglePath(rootId, path))).get();
-        return _remoteFiles.size() > 0;
+    boolean collect() {
+        try {
+            final String rootId = _drive.files().get("root").setFields("id").execute().getId();
+            final ForkJoinPool pool = new ForkJoinPool(_parallelQueries);
+            pool.submit(() -> _paths.parallelStream().forEach((path) -> processSinglePath(rootId, path))).get();
+            return _remoteFiles.size() > 0;
+        } catch (IOException | ExecutionException | InterruptedException ex) {
+            log.error(String.format("Error collecting Google drive files: [%s]", ex.getMessage()), ex);
+            throw new RuntimeException(ex);
+        }
     }
 
     Map<String, List<GDriveFileInfo>> collected() {
