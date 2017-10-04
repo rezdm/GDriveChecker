@@ -15,4 +15,23 @@
     <select id="selectGDriveFileInfo" resultMap="result">
         select id, fileId, folderId, path, name from GDriveFileInfo
     </select>
+
+    <insert id="createTable">
+        CREATE TABLE IF NOT EXISTS GDriveFileInfo(
+            id int auto_increment primary key,
+            fileId NVARCHAR(max),
+            folderId NVARCHAR(max),
+            path NVARCHAR(max),
+            name NVARCHAR(max)
+        )
+    </insert>
+
+    <insert id="insertGDriveFileInfo" parameterType="rezdm.data.GDriveFileInfo" useGeneratedKeys="true">
+        INSERT INTO GDriveFileInfo(fileId, folderId, path, name)
+        VALUES
+        <foreach collection="GDriveFileInfoList" item="model" separator=",">
+            (#{model.fileId}, #{model.folderId}, #{model.path}, #{model.name})
+        </foreach>
+    </insert>
+
 </mapper>

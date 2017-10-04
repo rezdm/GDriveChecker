@@ -1,7 +1,7 @@
 package rezdm.data;
 
 public class GDriveFileInfo {
-    private long id;
+    private int id;
 
     private String fileId;
     private String folderId;
@@ -18,11 +18,11 @@ public class GDriveFileInfo {
         this.name = name;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

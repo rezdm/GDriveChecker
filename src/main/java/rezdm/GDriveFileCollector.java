@@ -20,7 +20,7 @@ class GDriveFileCollector {
 
     private final Drive _drive;
     private final Collection<String> _paths;
-    private final Map<String, Collection<GDriveFileInfo>> _remoteFiles = new ConcurrentHashMap<>();
+    private final Map<String, List<GDriveFileInfo>> _remoteFiles = new ConcurrentHashMap<>();
     private final int _parallelQueries;
 
     GDriveFileCollector(Drive drive, Collection<String> paths, int parallelQueries) {
@@ -36,7 +36,7 @@ class GDriveFileCollector {
         return _remoteFiles.size() > 0;
     }
 
-    Map<String, Collection<GDriveFileInfo>> collected() {
+    Map<String, List<GDriveFileInfo>> collected() {
         return _remoteFiles;
     }
 
