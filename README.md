@@ -49,3 +49,9 @@ GD-003: After experiencing some issues, try to convert to thread-safe
 GD-004: v3 Api forces(?) to enumerate files by pages -- comply to this; (sideeffect: minor update in logging; limit to 2 threads accessing gdrive)
 
 GD-005: Persist Google Drive files info locally
+
+GD-006: Calculate difference (search new files)
+
+GD-007: Send e-mails with list of files and links to folders
+
+
