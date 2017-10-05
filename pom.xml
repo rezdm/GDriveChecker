@@ -4,7 +4,7 @@
     <groupId>rezdm</groupId>
     <artifactId>GDriveChecker</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <name>GDriveChecker</name>
     <url>http://www.reznitsky.info/</url>
     <properties>
