@@ -25,9 +25,9 @@ Configuration example:
         </folders>
     
         <from>reznitsky@gmail.com</from>
-        <recepients>
-            <recepient>reznitsky@gmail.com</recepient>
-        </recepients>
+        <recipients>
+            <recipient>reznitsky@gmail.com</recipient>
+        </recipients>
     
         <parallelGDriveQueries>2</parallelGDriveQueries>
     

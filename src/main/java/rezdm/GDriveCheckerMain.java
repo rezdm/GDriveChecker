@@ -1,9 +1,11 @@
 package rezdm;
 
+import com.google.api.services.gmail.Gmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rezdm.data.GDriveFileInfo;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
@@ -44,9 +46,9 @@ public class GDriveCheckerMain {
            log.info("Read from Google drive and read from local storage -- done");
 
            final Map<String, List<GDriveFileInfo>> newFiles = FindNewFiles(storedFiles, remoteFiles);
-
-           ReportNewFiles(configuration, newFiles);
-        } catch (IOException | GeneralSecurityException | InterruptedException ex ) {
+           PersistUpdates(newFiles, storage);
+           ReportNewFiles(configuration, newFiles, services.gmail());
+        } catch (IOException | GeneralSecurityException | InterruptedException | MessagingException ex ) {
             log.error("Exception while loading configuration, exiting application", ex);
         }
         log.info("GDriveChecker finished");
@@ -78,9 +80,19 @@ public class GDriveCheckerMain {
         return result;
     }
 
-    private static void ReportNewFiles(Configuration configuration, Map<String, List<GDriveFileInfo>> updates){
-        final String body = MessageBody(configuration.getFolderUpdate(), updates);
-        log.info(body);
+    private static void PersistUpdates(Map<String, List<GDriveFileInfo>> updates, LocalStorage storage) {
+        updates.entrySet().parallelStream().forEach((entry) -> storage.WriteGDriveFileInfo(entry.getValue()));
+    }
+
+    private static void ReportNewFiles(Configuration configuration, Map<String, List<GDriveFileInfo>> updates, Gmail mail) throws IOException, MessagingException {
+        if(updates.size() > 0) {
+            final String body = MessageBody(configuration.getFolderUpdate(), updates);
+            GMailHelper.Send(mail,
+                configuration.getFrom(),
+                configuration.getRecipients(),
+                configuration.getSubject(), body
+            );
+        }
     }
 
     private static String MessageBody(String lineTemplate, Map<String, List<GDriveFileInfo>> updates){
@@ -94,7 +106,4 @@ public class GDriveCheckerMain {
             .collect(Collectors.joining(",\r\n"))
         ;
     }
-
-
-
 }

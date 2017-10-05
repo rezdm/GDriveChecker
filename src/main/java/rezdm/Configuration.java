@@ -13,7 +13,7 @@ public class Configuration {
     private String CredentialsStore;
     private List<String> Folders;
     private String From;
-    private List<String> Recepients;
+    private List<String> Recipients;
 
     private int ParallelGDriveQueries;
     private String DbLocation;
@@ -70,12 +70,12 @@ public class Configuration {
         this.From = aFrom;
     }
 
-    public List<String> getRecepients() {
-        return this.Recepients;
+    public List<String> getRecipients() {
+        return Recipients;
     }
 
-    public void setRecepients(List<String> aRecepients) {
-        this.Recepients = aRecepients;
+    public void setRecipients(List<String> recipients) {
+        Recipients = recipients;
     }
 
     public int getParallelGDriveQueries() {
