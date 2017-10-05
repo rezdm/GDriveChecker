@@ -18,6 +18,9 @@ public class Configuration {
     private int ParallelGDriveQueries;
     private String DbLocation;
 
+    private String Subject;
+    private String FolderUpdate;
+
     public Configuration() {
     }
 
@@ -89,5 +92,21 @@ public class Configuration {
 
     public void setDbLocation(String dbLocation) {
         DbLocation = dbLocation;
+    }
+
+    public String getSubject() {
+        return Subject;
+    }
+
+    public void setSubject(String subject) {
+        Subject = subject;
+    }
+
+    public String getFolderUpdate() {
+        return FolderUpdate;
+    }
+
+    public void setFolderUpdate(String folderUpdate) {
+        FolderUpdate = folderUpdate;
     }
 }

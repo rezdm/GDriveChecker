@@ -7,9 +7,11 @@ import rezdm.data.GDriveFileInfo;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class GDriveCheckerMain {
     private final static Logger log = LoggerFactory.getLogger(GDriveCheckerMain.class);
@@ -42,6 +44,8 @@ public class GDriveCheckerMain {
            log.info("Read from Google drive and read from local storage -- done");
 
            final Map<String, List<GDriveFileInfo>> newFiles = FindNewFiles(storedFiles, remoteFiles);
+
+           ReportNewFiles(configuration, newFiles);
         } catch (IOException | GeneralSecurityException | InterruptedException ex ) {
             log.error("Exception while loading configuration, exiting application", ex);
         }
@@ -56,7 +60,41 @@ public class GDriveCheckerMain {
     }
 
     private static Map<String, List<GDriveFileInfo>> FindNewFiles(List<GDriveFileInfo> storedFiles, Map<String, List<GDriveFileInfo>> remoteFiles) {
-        return null;
+        final Map<String, List<GDriveFileInfo>> result = new ConcurrentHashMap<>();
+        remoteFiles.entrySet().parallelStream().forEach((entry) -> {
+            final String folderName = entry.getKey();
+            final List<GDriveFileInfo> remoteFilesInFolder = entry.getValue();
+            final List<GDriveFileInfo> absentFiles = remoteFilesInFolder
+                .stream()
+                .filter((remoteFile) -> storedFiles.stream().noneMatch((storedFile) -> storedFile.getFileId().equals(remoteFile.getFileId())))
+                .collect(Collectors.toList())
+            ;
+            if(!absentFiles.isEmpty()) {
+                log.info(String.format("Remote folder [%s] contains [%d] new files", folderName, absentFiles.size()));
+                result.put(folderName, absentFiles);
+            }
+        });
+
+        return result;
     }
+
+    private static void ReportNewFiles(Configuration configuration, Map<String, List<GDriveFileInfo>> updates){
+        final String body = MessageBody(configuration.getFolderUpdate(), updates);
+        log.info(body);
+    }
+
+    private static String MessageBody(String lineTemplate, Map<String, List<GDriveFileInfo>> updates){
+        return updates.entrySet()
+            .stream().map((e) ->
+                lineTemplate
+                    .replace("{folder_path}", e.getKey())
+                    .replace("{folder_link}", "link")
+                    .replace("{new_files_count}", String.valueOf(e.getValue().size()))
+            )
+            .collect(Collectors.joining(",\r\n"))
+        ;
+    }
+
+
 
 }

@@ -12,5 +12,10 @@
         <recepient>reznitsky@gmail.com</recepient>
     </recepients>
 
+    <subject>Изменилось содержимое папок на Google Drive</subject>
+    <folderUpdate>В папке {folder_path} ({folder_link}) появилось {new_files_count} файл(-ов, -а)</folderUpdate>
+
     <parallelGDriveQueries>2</parallelGDriveQueries>
+
+    <dbLocation>./.gdrivechecker.db/gdrivechecker</dbLocation>
 </Configuration>
