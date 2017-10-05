@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
         'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
 
-<mapper namespace="rezdm.data.GDriveFileInfoMapper">
+<mapper namespace="rezdm.data.GFileMapper">
 
-    <resultMap id = "result" type = "rezdm.data.GDriveFileInfo">
+    <resultMap id = "result" type = "rezdm.data.GFile">
         <result property = "id" column = "id"/>
         <result property = "fileId" column = "fileId"/>
         <result property = "folderId" column = "folderId"/>
@@ -26,10 +26,10 @@
         )
     </insert>
 
-    <insert id="insertGDriveFileInfo" parameterType="rezdm.data.GDriveFileInfo" useGeneratedKeys="true">
+    <insert id="insertGDriveFileInfo" parameterType="rezdm.data.GFile" useGeneratedKeys="true">
         INSERT INTO GDriveFileInfo(fileId, folderId, path, name)
         VALUES
-        <foreach collection="GDriveFileInfoList" item="model" separator=",">
+        <foreach collection="GFileList" item="model" separator=",">
             (#{model.fileId}, #{model.folderId}, #{model.path}, #{model.name})
         </foreach>
     </insert>

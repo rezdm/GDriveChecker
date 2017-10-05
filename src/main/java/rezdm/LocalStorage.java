@@ -6,8 +6,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rezdm.data.GDriveFileInfo;
-import rezdm.data.GDriveFileInfoMapper;
+import rezdm.data.GFile;
+import rezdm.data.GFileMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ final class AutoCloseableSession implements AutoCloseable {
 class LocalStorage {
     private final static Logger log = LoggerFactory.getLogger(LocalStorage.class);
     private final SqlSessionFactory SqlSessionFactory;
-    private final static Class<GDriveFileInfoMapper> MapperClass = rezdm.data.GDriveFileInfoMapper.class;
+    private final static Class<GFileMapper> MapperClass = GFileMapper.class;
 
     LocalStorage(String location) throws IOException {
         final String resource = "rezdm/mybatis-config.xml";
@@ -48,31 +48,31 @@ class LocalStorage {
         createTable();
     }
 
-    private <T> T DaoRun(Function<GDriveFileInfoMapper, T> f){
+    private <T> T DaoRun(Function<GFileMapper, T> f){
         try (final AutoCloseableSession session = new AutoCloseableSession(SqlSessionFactory)) {
-            final GDriveFileInfoMapper mapper = session.getSession().getMapper(MapperClass);
+            final GFileMapper mapper = session.getSession().getMapper(MapperClass);
             return f.apply(mapper);
         }
     }
 
-    private void DaoRunVoid(Consumer<GDriveFileInfoMapper> f){
+    private void DaoRunVoid(Consumer<GFileMapper> f){
         try (final AutoCloseableSession session = new AutoCloseableSession(SqlSessionFactory)) {
-            final GDriveFileInfoMapper mapper = session.getSession().getMapper(MapperClass);
+            final GFileMapper mapper = session.getSession().getMapper(MapperClass);
             f.accept(mapper);
         }
     }
 
     private void createTable() {
         log.info("Create table if not exists");
-        DaoRunVoid(GDriveFileInfoMapper::createTable);
+        DaoRunVoid(GFileMapper::createTable);
     }
 
-    public List<GDriveFileInfo> ReadGDriveFileInfo(){
+    public List<GFile> ReadGDriveFileInfo(){
         log.info("Read db -- load list of files");
-        return DaoRun(GDriveFileInfoMapper::selectGDriveFileInfo);
+        return DaoRun(GFileMapper::selectGDriveFileInfo);
     }
 
-    public void WriteGDriveFileInfo(final List<GDriveFileInfo> files){
+    public void WriteGDriveFileInfo(final List<GFile> files){
         log.info(String.format("Read db -- load list of [%d] files", files.size()));
         if(files.size() > 0) {
             DaoRunVoid((mapper) -> mapper.insertGDriveFileInfo(files));

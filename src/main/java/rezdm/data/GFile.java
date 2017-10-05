@@ -1,6 +1,6 @@
 package rezdm.data;
 
-public class GDriveFileInfo {
+public class GFile {
     private int id;
 
     private String fileId;
@@ -8,10 +8,10 @@ public class GDriveFileInfo {
     private String path;
     private String name;
 
-    public GDriveFileInfo() {
+    public GFile() {
     }
 
-    public GDriveFileInfo(String file_id, String folder_id, String path, String name) {
+    public GFile(String file_id, String folder_id, String path, String name) {
         this.fileId = file_id;
         this.folderId = folder_id;
         this.path = path;

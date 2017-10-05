@@ -3,7 +3,7 @@ package rezdm;
 import com.google.api.services.gmail.Gmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rezdm.data.GDriveFileInfo;
+import rezdm.data.GFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -35,8 +35,8 @@ public class GDriveCheckerMain {
            log.info(String.format("Initialize local storage at [%s]", configuration.getDbLocation()));
            final LocalStorage storage = new LocalStorage(configuration.getDbLocation());
 
-           final Map<String, List<GDriveFileInfo>> remoteFiles = new HashMap<>();
-           final List<GDriveFileInfo> storedFiles = new ArrayList<>();
+           final Map<GDriveFileCollector.GFolder, List<GFile>> remoteFiles = new HashMap<>();
+           final List<GFile> storedFiles = new ArrayList<>();
 
            log.info("Read from Google drive and read from local storage -- begin");
            RunSimultaneously(
@@ -45,7 +45,7 @@ public class GDriveCheckerMain {
            );
            log.info("Read from Google drive and read from local storage -- done");
 
-           final Map<String, List<GDriveFileInfo>> newFiles = FindNewFiles(storedFiles, remoteFiles);
+           final Map<GDriveFileCollector.GFolder, List<GFile>> newFiles = FindNewFiles(storedFiles, remoteFiles);
            PersistUpdates(newFiles, storage);
            ReportNewFiles(configuration, newFiles, services.gmail());
         } catch (IOException | GeneralSecurityException | InterruptedException | MessagingException ex ) {
@@ -61,30 +61,30 @@ public class GDriveCheckerMain {
         executor.awaitTermination(10, TimeUnit.MINUTES);
     }
 
-    private static Map<String, List<GDriveFileInfo>> FindNewFiles(List<GDriveFileInfo> storedFiles, Map<String, List<GDriveFileInfo>> remoteFiles) {
-        final Map<String, List<GDriveFileInfo>> result = new ConcurrentHashMap<>();
+    private static Map<GDriveFileCollector.GFolder, List<GFile>> FindNewFiles(List<GFile> storedFiles, Map<GDriveFileCollector.GFolder, List<GFile>> remoteFiles) {
+        final Map<GDriveFileCollector.GFolder, List<GFile>> result = new ConcurrentHashMap<>();
         remoteFiles.entrySet().parallelStream().forEach((entry) -> {
-            final String folderName = entry.getKey();
-            final List<GDriveFileInfo> remoteFilesInFolder = entry.getValue();
-            final List<GDriveFileInfo> absentFiles = remoteFilesInFolder
+            final GDriveFileCollector.GFolder folder = entry.getKey();
+            final List<GFile> remoteFilesInFolder = entry.getValue();
+            final List<GFile> absentFiles = remoteFilesInFolder
                 .stream()
                 .filter((remoteFile) -> storedFiles.stream().noneMatch((storedFile) -> storedFile.getFileId().equals(remoteFile.getFileId())))
                 .collect(Collectors.toList())
             ;
             if(!absentFiles.isEmpty()) {
-                log.info(String.format("Remote folder [%s] contains [%d] new files", folderName, absentFiles.size()));
-                result.put(folderName, absentFiles);
+                log.info(String.format("Remote folder [%s] contains [%d] new files", folder.getPath(), absentFiles.size()));
+                result.put(folder, absentFiles);
             }
         });
 
         return result;
     }
 
-    private static void PersistUpdates(Map<String, List<GDriveFileInfo>> updates, LocalStorage storage) {
+    private static void PersistUpdates(Map<GDriveFileCollector.GFolder, List<GFile>> updates, LocalStorage storage) {
         updates.entrySet().parallelStream().forEach((entry) -> storage.WriteGDriveFileInfo(entry.getValue()));
     }
 
-    private static void ReportNewFiles(Configuration configuration, Map<String, List<GDriveFileInfo>> updates, Gmail mail) throws IOException, MessagingException {
+    private static void ReportNewFiles(Configuration configuration, Map<GDriveFileCollector.GFolder, List<GFile>> updates, Gmail mail) throws IOException, MessagingException {
         if(updates.size() > 0) {
             final String body = MessageBody(configuration.getFolderUpdate(), updates);
             GMailHelper.Send(mail,
@@ -95,12 +95,12 @@ public class GDriveCheckerMain {
         }
     }
 
-    private static String MessageBody(String lineTemplate, Map<String, List<GDriveFileInfo>> updates){
+    private static String MessageBody(String lineTemplate, Map<GDriveFileCollector.GFolder, List<GFile>> updates){
         return updates.entrySet()
             .stream().map((e) ->
                 lineTemplate
-                    .replace("{folder_path}", e.getKey())
-                    .replace("{folder_link}", "link")
+                    .replace("{folder_path}", e.getKey().getPath())
+                    .replace("{folder_link}", e.getKey().getUrl())
                     .replace("{new_files_count}", String.valueOf(e.getValue().size()))
             )
             .collect(Collectors.joining(",\r\n"))

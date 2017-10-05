@@ -15,6 +15,6 @@
         </environment>
     </environments>
     <mappers>
-        <mapper resource="rezdm/data/GDriveFileInfoMapper.xml"/>
+        <mapper resource="rezdm/data/GFileMapper.xml"/>
     </mappers>
 </configuration>
