@@ -5,6 +5,8 @@ In 2014 I've got a big update in my family situation and I needed something to p
 
 Note, that this tool designed to suit my use case: report only new files. If any files were changed or udpated, this is not taken into account.
 
+Note, that alike functionality exists in Dropbox. But with Google drive I require less from users: just Google account, whereas using other services would require an application, user account, etc.
+
 ## Configuration details
 ### Google Drive API
 User is required to obtain her/his own Google Drive project and create secret.json
