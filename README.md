@@ -36,7 +36,7 @@ Configuration example:
 
 
 ## Requirements
-JDK 8 (streams)
+JDK 10 (streams)
 Maven (build)
 
 ## History of changes
@@ -56,4 +56,4 @@ GD-006: Calculate difference (search new files)
 
 GD-007: Send e-mails with list of files and links to folders
 
-
+GD-008: Move to Java 10
