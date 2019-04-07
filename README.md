@@ -57,3 +57,7 @@ GD-006: Calculate difference (search new files)
 GD-007: Send e-mails with list of files and links to folders
 
 GD-008: Move to Java 10
+
+GD-009: Move to JDK 12
+
+GD-010: Fix build
