@@ -30,11 +30,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>LATEST</version>
                 <configuration>
-                    <source>10</source>
-                    <target>10</target>
-                    <release>10</release>
+                    <source>12</source>
+                    <target>12</target>
+                    <release>12</release>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>LATEST</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -55,7 +55,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
+                <version>LATEST</version>
                 <configuration>
                     <mainClass>rezdm.GDriveCheckerMain</mainClass>
                 </configuration>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>LATEST</version>
             <scope>test</scope>
         </dependency>
 
@@ -76,71 +76,71 @@
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-gmail</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-oauth2</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <!-- reading xmls -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <!-- db and orm -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
         <!-- mail -->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>RELEASE</version>
+            <version>LATEST</version>
         </dependency>
 
 

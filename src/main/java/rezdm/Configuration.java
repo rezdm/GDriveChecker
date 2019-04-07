@@ -24,7 +24,7 @@ public class Configuration {
     public Configuration() {
     }
 
-    public static Configuration read(String configurationFileName) throws IOException {
+    static Configuration read(String configurationFileName) throws IOException {
         final XmlMapper xmlMapper = new XmlMapper();
         final String xml = new String(Files.readAllBytes(Paths.get(configurationFileName)));
         return xmlMapper.readValue(xml, Configuration.class);

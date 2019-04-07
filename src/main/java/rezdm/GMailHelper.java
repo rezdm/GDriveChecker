@@ -1,6 +1,6 @@
 package rezdm;
 
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
+import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 
 import javax.mail.Message;
@@ -41,7 +41,7 @@ class GMailHelper {
         return message;
     }
 
-    public static void Send(Gmail service, String from, Collection<String> to, String subject, String body) throws MessagingException, IOException {
+    static void Send(Gmail service, String from, Collection<String> to, String subject, String body) throws MessagingException, IOException {
         final MimeMessage email = CreateEmail(from, to, subject, body);
         final com.google.api.services.gmail.model.Message message = CreateMessageWithEmail(email);
         //String userId = "me";

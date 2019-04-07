@@ -8,9 +8,6 @@ public class GFile {
     private String path;
     private String name;
 
-    public GFile() {
-    }
-
     public GFile(String file_id, String folder_id, String path, String name) {
         this.fileId = file_id;
         this.folderId = folder_id;

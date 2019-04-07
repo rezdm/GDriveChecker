@@ -67,12 +67,12 @@ class LocalStorage {
         DaoRunVoid(GFileMapper::createTable);
     }
 
-    public List<GFile> ReadGDriveFileInfo(){
+    List<GFile> ReadGDriveFileInfo(){
         log.info("Read db -- load list of files");
         return DaoRun(GFileMapper::selectGDriveFileInfo);
     }
 
-    public void WriteGDriveFileInfo(final List<GFile> files){
+    void WriteGDriveFileInfo(final List<GFile> files){
         log.info(String.format("Read db -- load list of [%d] files", files.size()));
         if(files.size() > 0) {
             DaoRunVoid((mapper) -> mapper.insertGDriveFileInfo(files));

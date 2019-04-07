@@ -23,7 +23,7 @@ import java.util.Arrays;
 *
  */
 
-public class GoogleServices {
+class GoogleServices {
     //private final String _ApplicationName = "GDriveChecker";
     private final HttpTransport _HttpTransport = GoogleNetHttpTransport.newTrustedTransport();
     private final JacksonFactory _JacksonFactory = JacksonFactory.getDefaultInstance();
@@ -31,7 +31,7 @@ public class GoogleServices {
     private final ThreadLocal<Drive> _drive;
     private final ThreadLocal<Gmail> _gmail;
 
-    private Credential authorize(Configuration configuration) throws IOException, GeneralSecurityException {
+    private Credential authorize(Configuration configuration) throws IOException {
         final InputStream in = new FileInputStream(configuration.getSecretFile());
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(_JacksonFactory, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = (new GoogleAuthorizationCodeFlow.Builder(_HttpTransport, _JacksonFactory, clientSecrets, Arrays.asList("https://www.googleapis.com/auth/drive.metadata.readonly", "https://www.googleapis.com/auth/gmail.compose"))).setDataStoreFactory(new FileDataStoreFactory(new File(configuration.getCredentialsStore()))).setAccessType("offline").build();
@@ -47,7 +47,7 @@ public class GoogleServices {
         try {
             Credential credential = authorize(configuration);
             return (new Drive.Builder(_HttpTransport, _JacksonFactory, credential)).setApplicationName("GDriveChecker").build();
-        } catch (IOException | GeneralSecurityException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -56,7 +56,7 @@ public class GoogleServices {
         try {
             Credential credential = authorize(configuration);
             return (new Gmail.Builder(_HttpTransport, _JacksonFactory, credential)).setApplicationName("GDriveChecker").build();
-        } catch (IOException | GeneralSecurityException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -65,7 +65,7 @@ public class GoogleServices {
         return _drive.get();
     }
 
-    public Gmail gmail() {
+    Gmail gmail() {
         return _gmail.get();
     }
 }
