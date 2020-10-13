@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
 class GDriveFileCollector {
-    class GFolder {
+    static class GFolder {
         private final String path;
         private final String id;
         private final String url;
